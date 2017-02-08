@@ -1,16 +1,28 @@
-import React, { Component} from 'react';
+import React, { Component , PropTypes } from 'react';
 import {reduxForm} from 'redux-form';
 import {Link} from 'react-router';
 import {createPost} from  '../actions/index';
 
 class PostsNew extends Component{
+	static contextTypes={
+		router:PropTypes.object
+	};
 
+	onSubmit(props){
+		this.props.createPost(props)
+		.then(()=>{
+			//blog post has been created naviagete user to the index
+			//we navigate by calling this .context.router.push with the
+			//new path to naviaget to.
+			this.context.router.push('/');
+		});
+	}
 	render(){
 		const{fields:{title,categories,content},handleSubmit}=this.props;
 		
 		return(
 			
-				<form onSubmit={handleSubmit(this.props.createPost)}>
+				<form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
 					<h3>Create a new Post</h3>
 					<div className={`form-group ${title.touched && title.invalid ? 'has-danger' : ''}`}>
 						<label>Title</label>
@@ -66,6 +78,6 @@ function validate(values){
 //redux form 1st is form config, 2nd is mapstate to props 3rd is map dispatch to props
 
 export default reduxForm({
-	form:'PostsNew',
+	form:'PostsNewForm',
 	fields:['title','categories','content'],validate
 },null,{createPost})(PostsNew);

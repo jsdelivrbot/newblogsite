@@ -1,12 +1,25 @@
 import React,{Component} from 'react';
 import {connect } from 'react-redux';
 import {fetchPosts} from '../actions/index';
+import { createPost } from '../actions/index';
 import { Link } from 'react-router';
 
 
 class PostsIndex extends Component{
 	componentWillMount(){
 		this.props.fetchPosts();
+	}
+	renderPosts(){
+		return this.props.posts.map((posts)=>{
+			return (
+					<li className="list-group-item" key={posts.id}>
+							<Link to={"posts/"+posts.id}>
+							<span className='pull-xs-right'>{posts.categories}</span>
+							<strong>{posts.title}</strong>
+								</Link>
+					</li>
+				);
+		});
 	}
 	render(){
 		return (
@@ -16,7 +29,10 @@ class PostsIndex extends Component{
 						Add to post
 					</Link>
 			</div>
-			List of blog posts
+			<h3> Posts	</h3>
+			<ul className='list-group'>
+				{this.renderPosts()}
+			</ul>
 
 			</div>
 
@@ -24,6 +40,8 @@ class PostsIndex extends Component{
 	}
 }
 
+function mapStateToProps(state){
+	return {posts:state.posts.all};
+}
 
-
-export default connect(null,{fetchPosts})(PostsIndex);
+export default connect(mapStateToProps,{fetchPosts})(PostsIndex);
